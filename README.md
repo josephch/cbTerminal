@@ -17,3 +17,6 @@ cmake ../
 make
 ```
 Alternatively, you can open the project in codeblocks and build it from there.
+
+## Thanks
+Most of the code is taken from ThreadedSearch plugin and modified. Thank you authors of threaded search plugin.
