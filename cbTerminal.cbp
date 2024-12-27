@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="cbTerminal" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="default">
+				<Option output="cbTerminal" prefix_auto="1" extension_auto="1" />
+				<Option object_output=".objs/default" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="`pkg-config --cflags codeblocks`" />
+					<Add option="`wx-config --cflags`" />
+					<Add option="-g" />
+					<Add option="-Wall" />
+					<Add directory="json/include" />
+				</Compiler>
+				<Linker>
+					<Add option="`pkg-config --libs codeblocks`" />
+					<Add option="`wx-config --libs`" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="zip -j9 cbTerminal.zip manifest.xml" />
+					<Add after="cp -f libcbTerminal.so cbTerminal.so" />
+					<Add after="zip -j9 cbTerminal.cbplugin cbTerminal.so cbTerminal.zip" />
+					<Add after="rm -f cbTerminal.so" />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="default;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-std=c++11" />
+			<Add option="-fPIC" />
+			<Add option="`pkg-config --cflags vte-2.91`" />
+			<Add directory="." />
+		</Compiler>
+		<Linker>
+			<Add option="-Wl,--no-undefined" />
+			<Add option="`pkg-config --libs vte-2.91`" />
+		</Linker>
+		<Unit filename="cbTerminal.cpp" />
+		<Unit filename="cbTerminal.hpp" />
+		<Unit filename="cbTerminalView.cpp" />
+		<Unit filename="cbTerminalView.hpp" />
+		<Unit filename="cbTerminalViewManagerBase.cpp" />
+		<Unit filename="cbTerminalViewManagerBase.hpp" />
+		<Unit filename="cbTerminalViewManagerLayout.cpp" />
+		<Unit filename="cbTerminalViewManagerLayout.hpp" />
+		<Unit filename="cbTerminalViewManagerMessagesNotebook.cpp" />
+		<Unit filename="cbTerminalViewManagerMessagesNotebook.hpp" />
+		<Unit filename="manifest.xml" />
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
