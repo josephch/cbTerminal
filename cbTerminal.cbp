@@ -24,6 +24,7 @@
 				</Linker>
 				<ExtraCommands>
 					<Add after="zip -j9 cbTerminal.zip manifest.xml" />
+					<Add after="cd resources &amp;&amp; zip -Rq9 ../cbTerminal.zip terminal-16.png &amp;&amp; cd .." />
 					<Add after="cp -f libcbTerminal.so cbTerminal.so" />
 					<Add after="zip -j9 cbTerminal.cbplugin cbTerminal.so cbTerminal.zip" />
 					<Add after="rm -f cbTerminal.so" />

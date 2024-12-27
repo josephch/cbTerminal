@@ -73,6 +73,13 @@ add_custom_command(
                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
                   )
 
+# cd resources && zip -Rq9 ../cbTerminal.zip terminal-16.png && cd ..
+add_custom_command(
+                   TARGET ${TARGET_OUTPUTNAME}
+                   POST_BUILD COMMAND cd resources && zip -Rq9 ../cbTerminal.zip terminal-16.png && cd ..
+                   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                  )
+
 # cp -f libcbTerminal.so cbTerminal.so
 add_custom_command(
                    TARGET ${TARGET_OUTPUTNAME}
