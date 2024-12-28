@@ -13,7 +13,6 @@
 #define CB_TERMINAL_VIEW_H
 
 #include <wx/panel.h>
-#include <vte/vte.h>
 
 class cbTerminal;
 class cbTerminalView: public wxPanel {
@@ -21,7 +20,6 @@ class cbTerminalView: public wxPanel {
 private:
     friend class cbTerminal;
     cbTerminal&       m_cbTerminalPlugin;
-    VteTerminal* m_vte;
 public:
     cbTerminalView(cbTerminal& );
     ~cbTerminalView();

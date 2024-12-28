@@ -27,13 +27,14 @@
 #include "cbTerminal.hpp"
 #include "cbTerminalView.hpp"
 #include <wx/nativewin.h>
+#include <vte/vte.h>
 
 cbTerminalView::cbTerminalView(cbTerminal& terminalPlugin) :
     wxPanel(Manager::Get()->GetAppWindow()),
     m_cbTerminalPlugin(terminalPlugin)
 {
-    m_vte = VTE_TERMINAL(vte_terminal_new());
-    if (!m_vte)
+    VteTerminal* vteTerminal = VTE_TERMINAL(vte_terminal_new());
+    if (!vteTerminal)
     {
         fprintf(stderr, "Could not create VTE terminal\n");
         return;
@@ -44,10 +45,10 @@ cbTerminalView::cbTerminalView(cbTerminal& terminalPlugin) :
     vte_terminal_spawn_async(m_vte, VTE_PTY_DEFAULT, NULL, bash_args, NULL,
                              (GSpawnFlags)0, NULL, NULL, NULL, -1, NULL, NULL, NULL);
 #else
-     vte_terminal_spawn_sync(m_vte, VTE_PTY_DEFAULT, NULL, bash_args, NULL,  //NOLINT
+     vte_terminal_spawn_sync(vteTerminal, VTE_PTY_DEFAULT, NULL, bash_args, NULL,  //NOLINT
                              (GSpawnFlags)0, NULL, NULL, NULL, NULL, NULL );
 #endif
-    wxNativeWindow* nativeWindow = new wxNativeWindow(this, wxID_ANY, GTK_WIDGET(m_vte));
+    wxNativeWindow* nativeWindow = new wxNativeWindow(this, wxID_ANY, GTK_WIDGET(vteTerminal));
     sizer->Add(nativeWindow, 1, wxEXPAND);
     SetSizer(sizer);
 }
