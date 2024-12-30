@@ -29,6 +29,64 @@
 #include <wx/nativewin.h>
 #include <vte/vte.h>
 
+class VteNativeWindow : public wxNativeWindow
+{
+public:
+    VteNativeWindow(wxWindow* parent, wxWindowID winid, VteTerminal* vteTerminal) :
+        wxNativeWindow(parent, winid, GTK_WIDGET(vteTerminal))
+        , m_vteTerminal(vteTerminal)
+    {
+        g_signal_connect(GTK_WIDGET(vteTerminal), "button-press-event",
+                         G_CALLBACK (handleButtonPressEvent), this);
+    }
+
+private:
+    static gboolean handleButtonPressEvent(GtkWidget *widget,
+                                           GdkEventButton *event, VteNativeWindow *vteNativeWindow)
+    {
+        fprintf(stderr, "%s:%d event->button %d event->type %d\n", __FUNCTION__, __LINE__, event->button, event->type);
+        if (event->button == 3)
+        {
+            if (GTK_WIDGET_CLASS(VTE_TERMINAL_GET_CLASS(widget))->
+                    button_press_event(widget, event))
+            {
+                abort();
+                return TRUE;
+            }
+            if (event->type == GDK_BUTTON_PRESS)
+            {
+                vteNativeWindow->OnRightMouseDown();
+            }
+        }
+        return FALSE;
+    }
+
+    void OnRightMouseDown()
+    {
+        wxPoint pos = ScreenToClient(wxGetMousePosition());
+        wxMenu menu;
+        menu.Append(wxID_COPY, "Copy\tc");
+        menu.Append(wxID_PASTE, "Paste\tp");
+
+        menu.Bind(wxEVT_MENU, &VteNativeWindow::OnCopy, this, wxID_COPY);
+        menu.Bind(wxEVT_MENU, &VteNativeWindow::OnPaste, this, wxID_PASTE);
+
+        PopupMenu(&menu, pos);
+    }
+
+    void OnCopy(wxCommandEvent& event)
+    {
+        vte_terminal_copy_clipboard_format(m_vteTerminal, VTE_FORMAT_TEXT);
+    }
+
+    void OnPaste(wxCommandEvent& event)
+    {
+        vte_terminal_paste_clipboard(m_vteTerminal);
+    }
+
+    VteTerminal *m_vteTerminal;
+};
+
 cbTerminalView::cbTerminalView(cbTerminal& terminalPlugin) :
     wxPanel(Manager::Get()->GetAppWindow()),
     m_cbTerminalPlugin(terminalPlugin)
@@ -48,7 +106,7 @@ cbTerminalView::cbTerminalView(cbTerminal& terminalPlugin) :
      vte_terminal_spawn_sync(vteTerminal, VTE_PTY_DEFAULT, NULL, bash_args, NULL,  //NOLINT
                              (GSpawnFlags)0, NULL, NULL, NULL, NULL, NULL );
 #endif
-    wxNativeWindow* nativeWindow = new wxNativeWindow(this, wxID_ANY, GTK_WIDGET(vteTerminal));
+    wxNativeWindow* nativeWindow = new VteNativeWindow(this, wxID_ANY, vteTerminal);
     sizer->Add(nativeWindow, 1, wxEXPAND);
     SetSizer(sizer);
 }
